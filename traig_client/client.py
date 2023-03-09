@@ -36,11 +36,12 @@ class TraigClient:
 
     def init_metrics(self, **metrics):
         metric_types = [m.value for m in MetricTypeEnum]
-        for k, v in metrics.items():
-            if k not in metric_types:
-                logging.warning(f'metric type "{v}" for metric "{k}" is not understood, will ignore it. '
-                                f'Please specify one of ({", ".join(metric_types)})')
-                metrics.pop(k)
+        metrics_validated = {k: v for k, v in metrics.items() if v in metric_types}
+
+        for ignored_metric in set(metrics.keys()) - set(metrics_validated.keys()):
+            logging.debug(f'metric type {metrics[ignored_metric]} for metric {ignored_metric} is not understood '
+                          f'and will be ignored. '
+                          f'Use one of: {metric_types}')
 
         if len(metrics) == 0:
             logging.warning('No metrics to initialize, ignoring')
