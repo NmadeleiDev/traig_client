@@ -65,6 +65,11 @@ class TraigClient:
                 logging.warning(f'metric "{k}" was not initialized, will ignore it. '
                                 f'Your initialized metrics are: {self.metrics}')
                 metric_values.pop(k)
+        metric_values_validated = {k: v for k, v in metric_values.items() if k in self.metrics}
+
+        for ignored_metric in set(metric_values.keys()) - set(metric_values_validated.keys()):
+            logging.warning(f'metric "{ignored_metric}" was not initialized, will ignore it. '
+                            f'Your initialized metrics are: {self.metrics}')
 
         if len(metric_values) == 0:
             logging.warning('No metrics to update, ignoring')
